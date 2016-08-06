@@ -7,6 +7,39 @@ var session = require('express-session'); // do not change this line
 // as shown in the examples, you are asked to respond to various requests in different ways
 // you will need to use the session middleware to store the data
 
+var server = express();
+var visited = {};
+
+server.use(session({
+  'store': new session.MemoryStore(),
+  'secret': 'slug',
+  'resave': false,
+  'saveUninitialized': false,
+  'cookie': { 'maxAge': 86400 }
+  })
+);
+
+server.get('/*', function(req, res) {
+  res.status(200);
+  res.set({ 'Content-Type': 'text/plain' });
+
+  console.log('the cookies... ' + JSON.stringify(req.session.cookie));
+
+  if(req.session.example === undefined) {
+    req.session.example = [];
+
+    res.send('you must be new');
+  }
+  else {
+    console.log('url... ' + req.url);
+    req.session.example.push(req.url);
+    res.send('your history:\n'+ req.session.example.join('\n'));
+  }
+});
+
+server.listen(process.env.PORT || 8080);
+
+
 // examples which serve as a specification for the required features, note that they have an order:
 //   http://localhost:8080/hello should return 'you must be new' in plain text and set an ident cookie
 //   http://localhost:8080/test should return 'your history:\n  /hello' in plain text
