@@ -23,17 +23,23 @@ server.get('/*', function(req, res) {
   res.status(200);
   res.set({ 'Content-Type': 'text/plain' });
 
-  console.log('the cookies... ' + JSON.stringify(req.session.cookie));
+  //console.log('the cookies... ' + JSON.stringify(req.session.cookie));
 
   if(req.session.example === undefined) {
     req.session.example = [];
-
+    req.session.example.push(req.path);
     res.send('you must be new');
   }
   else {
-    console.log('url... ' + req.url);
-    req.session.example.push(req.url);
-    res.send('your history:\n'+ req.session.example.join('\n'));
+    //console.log('url... ' + req.url);
+    var history = 'your history:';
+        for(var i = 0; i < req.session.example.length; i += 1 ) {
+            history += '\n  ';
+            history += req.session.example[i];
+        }
+    res.write(history);
+    req.session.example.push(req.path);
+    res.end();
   }
 });
 
