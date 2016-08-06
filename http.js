@@ -43,7 +43,7 @@ server.get('/cookie', function(req, res) {
         'Content-Type': 'text/plain',
         'Set-Cookie':'hello=world'
         });
-        console.log('cookies... ' + req.cookies);
+        console.log('* cookie... ' + req.cookie);
     res.send('i gave you a cookie');
 });
 //CHECK
@@ -53,24 +53,27 @@ server.get('/check', function(req, res) {
         'Content-Type': 'text/plain',
         });
 
-    var cookies = req.headers.cookie.split(',');
-    var str = '';
-    console.log('1 cookies... ' + cookies);
+    if(req.headers.cookie === undefined) {
+      res.send('no');
+    } else {
+        var cookies = req.headers.cookie.split(',');
+        var str = '';
+        console.log('1 cookies... ' + cookies);
 
-    for (var i=0; i < cookies.length; i += 1) {
-      var cookie = cookies[i].split('=');
-      if(cookie[0].trim() === 'hello') {
-          str = cookie[1].trim();
+        for (var i=0; i < cookies.length; i += 1) {
+          var cookie = cookies[i].split('=');
+          if(cookie[0].trim() === 'hello') {
+              str = cookie[1].trim();
+          }
+        }
       }
-    }
-
     console.log('2 str ... ' + str);
 
     if(str === 'world') {
-        res.write('yes');
+        res.send('yes');
     }
-    else { res.write('no'); }
-    res.end();
+    else { res.send('no'); }
+    //res.end();
 });
 
 
