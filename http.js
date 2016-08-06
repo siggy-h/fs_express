@@ -1,4 +1,4 @@
-'use strict';
+ 'use strict';
 
 var express = require('express'); // do not change this line
 var server = express();
@@ -37,21 +37,36 @@ server.get('/cache', function(req, res) {
     res.send('cache this resource');
 });
 //COOKIE
-server.get('/cache', function(req, res) {
+server.get('/cookie', function(req, res) {
     res.status(200);
     res.set({
         'Content-Type': 'text/plain',
         'Set-Cookie':'hello=world'
         });
+        console.log('cookies... ' + req.cookies);
     res.send('i gave you a cookie');
 });
-//COOKIE
-server.get('/cache', function(req, res) {
+//CHECK
+server.get('/check', function(req, res) {
     res.status(200);
     res.set({
         'Content-Type': 'text/plain',
         });
-    if(req.cookies.hello === 'world') {
+
+    var cookies = req.headers.cookie.split(',');
+    var str = '';
+    console.log('1 cookies... ' + cookies);
+
+    for (var i=0; i < cookies.length; i += 1) {
+      var cookie = cookies[i].split('=');
+      if(cookie[0].trim() === 'hello') {
+          str = cookie[1].trim();
+      }
+    }
+
+    console.log('2 str ... ' + str);
+
+    if(str === 'world') {
         res.write('yes');
     }
     else { res.write('no'); }
