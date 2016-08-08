@@ -16,34 +16,41 @@ var strategy = require('passport-http'); // do not change this line
 // should the server restart, a user that already authenticated will thus not need to login
 
 var server = express();
- 
+
 server.use(passport.initialize());
 
 server.get('/hello', function(req, res) {
     res.status(200);
-    res.set({ 'Content-Type': 'text/pain' });
-    res.send('accessible to everyone');
+    res.set({ 'Content-Type': 'text/plain' });
+    res.write('accessible to everyone');
+    res.end();
 });
 
 //authenticating user
 passport.use( new strategy.BasicStrategy (
       function(username, password, done) {
         if(username === 'test' && password === 'logmein') {
-          return done(null, true); }
-        else { return done(null, false); }
+          return done(null, true);
+        }
+
+          return done(null, false);
   }));
 
-server.get( '/world', function(req, res) {
-  res.status(200);
-  res.set({ 'Content-Type': 'text/plain' });
-  res.send('only accessible when logged in');
-});
+server.get( '/world', passport.authenticate('basic', {session: false}),
+    function(req, res) {
+      res.status(200);
+      res.set({ 'Content-Type': 'text/plain' });
+      res.write('only accessible when logged in');
+      res.end();
+    });
 
-server.get( '/test', function(req, res) {
-  res.status(200);
-  res.set({ 'Content-Type': 'text/plain' });
-  res.send('only accessible when logged in');
-});
+server.get( '/test', passport.authenticate('basic', {session: false}),
+    function(req, res) {
+      res.status(200);
+      res.set({ 'Content-Type': 'text/plain' });
+      res.write('only accessible when logged in');
+      res.end();
+    });
 
 server.listen(process.env.PORT || 8080);
 
