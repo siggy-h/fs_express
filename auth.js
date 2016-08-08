@@ -16,7 +16,7 @@ var strategy = require('passport-http'); // do not change this line
 // should the server restart, a user that already authenticated will thus not need to login
 
 var server = express();
-
+ 
 server.use(passport.initialize());
 
 server.get('/hello', function(req, res) {
